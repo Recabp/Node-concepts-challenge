@@ -73,10 +73,15 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { title, deadline } = request.body;
-  const id = request.params;
+  const { id } = request.params;
   const { verifiedUser } = request;
 
+  console.log(verifiedUser.todos)
+
   const filteredTodo = verifiedUser.todos.find(todo => todo.id === id)
+
+  console.log(filteredTodo)
+
   if (!filteredTodo) {
 
     return response.status(404).json({ error: 'Todo Not Found' })
@@ -92,11 +97,10 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  const id = request.params
+  const { id } = request.params
   const { verifiedUser } = request
 
-
-  const filteredTodo = verifiedUser.todos.find(todo => todo.id === id)
+  const filteredTodo = verifiedUser.todos.find((todo) => todo.id === id)
 
   if (!filteredTodo) {
     return response.status(404).json({ error: 'Todo Not Found' })
@@ -109,18 +113,20 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  const id = request.params
+  const { id } = request.params
   const { verifiedUser } = request
 
   const filteredTodoIndex = verifiedUser.todos.findIndex(todo => todo.id === id)
+
+  console.log(filteredTodoIndex)
 
   if (filteredTodoIndex === -1) {
     return response.status(404).json({ error: 'Todo Not Found' })
   }
 
-  verifiedUser.splice(filteredTodoIndex, 1)
+  verifiedUser.todos.splice(filteredTodoIndex, 1)
 
-  return response.status(204)
+  return response.status(204).send()
 });
 
 module.exports = app;
